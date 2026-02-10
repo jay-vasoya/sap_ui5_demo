@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>App Title</title>
-    <link rel="stylesheet" href="./css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP UI5 Demo App</title>
     
     <script
         id="sap-ui-bootstrap"
@@ -13,12 +13,30 @@
         data-sap-ui-resource-roots='{
             "firstapp.project1": "./"
         }'
-        data-sap-ui-libs="sap.m,sap.tnt"
+        data-sap-ui-libs="sap.m,sap.tnt,sap.ui.layout"
         data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
         data-sap-ui-compat-version="edge"
         data-sap-ui-async="true"
         data-sap-ui-frame-options="trusted"
+        data-sap-ui-preload="async"
     ></script>
+    
+    <link rel="stylesheet" href="./css/style.css">
+    
+    <script>
+        // Debug logging
+        console.log('Index.html loaded at:', new Date().toISOString());
+        console.log('Current URL:', window.location.href);
+        
+        window.addEventListener('load', function() {
+            console.log('Page loaded successfully');
+        });
+        
+        // Error handling
+        window.addEventListener('error', function(e) {
+            console.error('Error:', e.message, e.filename, e.lineno);
+        });
+    </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
     <div
@@ -28,8 +46,5 @@
         data-settings='{"id" : "firstapp.project1"}'
         data-handle-validation="true"
     ></div>
-
-    
-
 </body>
 </html>
