@@ -9,8 +9,8 @@
 </head>
 <body class="sapUiBody sapUiSizeCompact" id="content">
     <div id="loading-message" style="padding: 20px; font-family: Arial; text-align: center;">
-        <h2>Loading SAP UI5 Application...</h2>
-        <p id="status">Initializing...</p>
+        <h2>Loading Application...</h2>
+        <p id="status">Trying OpenUI5 CDN...</p>
     </div>
     
     <div
@@ -23,7 +23,7 @@
     ></div>
 
     <script>
-        console.log('=== Dynamic UI5 Loader ===');
+        console.log('=== Trying OpenUI5 CDN ===');
         
         var statusEl = document.getElementById('status');
         
@@ -32,12 +32,12 @@
             if (statusEl) statusEl.textContent = msg;
         }
         
-        updateStatus('Creating UI5 bootstrap script...');
+        // Try OpenUI5 from sdk.openui5.org
+        updateStatus('Loading from OpenUI5 CDN...');
         
-        // Create script element dynamically
         var script = document.createElement('script');
         script.id = 'sap-ui-bootstrap';
-        script.src = 'https://sapui5.hana.ondemand.com/1.108.0/resources/sap-ui-core.js';
+        script.src = 'https://sdk.openui5.org/1.108.1/resources/sap-ui-core.js';
         script.setAttribute('data-sap-ui-theme', 'sap_horizon');
         script.setAttribute('data-sap-ui-resource-roots', '{"firstapp.project1": "./"}');
         script.setAttribute('data-sap-ui-libs', 'sap.m,sap.tnt,sap.ui.layout');
@@ -48,10 +48,9 @@
         script.setAttribute('data-sap-ui-preload', 'async');
         
         script.onload = function() {
-            updateStatus('✅ UI5 Core loaded! Initializing component...');
-            console.log('✅ UI5 script loaded successfully');
+            updateStatus('✅ UI5 loaded! Initializing...');
+            console.log('✅ OpenUI5 loaded successfully from sdk.openui5.org');
             
-            // Hide loading message after component loads
             setTimeout(function() {
                 var loadingMsg = document.getElementById('loading-message');
                 var container = document.querySelector('[data-sap-ui-component]');
@@ -59,33 +58,46 @@
                 if (loadingMsg) loadingMsg.style.display = 'none';
                 if (container) container.style.display = 'block';
                 
-                if (typeof sap !== 'undefined' && sap.ui) {
-                    console.log('✅ SAP UI initialized successfully');
-                } else {
-                    updateStatus('⚠️ UI5 loaded but not initialized properly');
+                if (typeof sap !== 'undefined') {
+                    console.log('✅ SAP namespace available');
+                    console.log('✅ Your app should now be visible!');
                 }
             }, 2000);
         };
         
         script.onerror = function(e) {
-            updateStatus('❌ Failed to load UI5 from CDN');
-            console.error('❌ Failed to load UI5 script');
-            console.error('Error:', e);
-            console.error('Make sure you can access: https://sapui5.hana.ondemand.com');
+            updateStatus('❌ OpenUI5 CDN also failed');
+            console.error('❌ OpenUI5 CDN failed too');
+            console.error('Trying alternative CDN...');
+            
+            // Try alternative: CDNjs
+            var script2 = document.createElement('script');
+            script2.src = 'https://sapui5.hana.ondemand.com/resources/sap-ui-core.js';
+            script2.setAttribute('data-sap-ui-theme', 'sap_horizon');
+            script2.setAttribute('data-sap-ui-resource-roots', '{"firstapp.project1": "./"}');
+            script2.setAttribute('data-sap-ui-libs', 'sap.m,sap.tnt,sap.ui.layout');
+            script2.setAttribute('data-sap-ui-on-init', 'module:sap/ui/core/ComponentSupport');
+            script2.setAttribute('data-sap-ui-async', 'true');
+            
+            script2.onload = function() {
+                updateStatus('✅ Alternative CDN worked!');
+                console.log('✅ Loaded from alternative CDN');
+                var loadingMsg = document.getElementById('loading-message');
+                var container = document.querySelector('[data-sap-ui-component]');
+                if (loadingMsg) loadingMsg.style.display = 'none';
+                if (container) container.style.display = 'block';
+            };
+            
+            script2.onerror = function() {
+                updateStatus('❌ All CDNs blocked - Need to self-host UI5');
+                console.error('❌ All CDN options failed');
+                console.error('SOLUTION: You need to self-host UI5 libraries');
+            };
+            
+            document.head.appendChild(script2);
         };
         
-        updateStatus('Loading UI5 library from CDN...');
-        console.log('Appending script to head...');
         document.head.appendChild(script);
-        
-        // Timeout check
-        setTimeout(function() {
-            if (typeof sap === 'undefined') {
-                updateStatus('❌ UI5 failed to load after 5 seconds');
-                console.error('❌ UI5 did not load after 5 seconds');
-                console.error('Check if you can access: https://sapui5.hana.ondemand.com/1.108.0/resources/sap-ui-core.js');
-            }
-        }, 5000);
     </script>
 </body>
 </html>
