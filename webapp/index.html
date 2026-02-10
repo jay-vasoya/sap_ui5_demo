@@ -5,7 +5,27 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAP UI5 Demo App</title>
+</head>
+<body class="sapUiBody sapUiSizeCompact" id="content">
+    <div
+        data-sap-ui-component
+        data-name="firstapp.project1"
+        data-id="container"
+        data-settings='{"id" : "firstapp.project1"}'
+        data-handle-validation="true"
+    ></div>
+
+    <!-- Load CSS -->
+    <link rel="stylesheet" href="./css/style.css">
     
+    <!-- Debug Script -->
+    <script>
+        console.log('=== Page Loading ===');
+        console.log('URL:', window.location.href);
+        console.log('Time:', new Date().toISOString());
+    </script>
+    
+    <!-- Load UI5 - MOVED TO BODY BOTTOM -->
     <script
         id="sap-ui-bootstrap"
         src="https://sapui5.hana.ondemand.com/1.108.0/resources/sap-ui-core.js"
@@ -21,30 +41,43 @@
         data-sap-ui-preload="async"
     ></script>
     
-    <link rel="stylesheet" href="./css/style.css">
-    
     <script>
-        // Debug logging
-        console.log('Index.html loaded at:', new Date().toISOString());
-        console.log('Current URL:', window.location.href);
+        console.log('UI5 script tag added to page');
         
-        window.addEventListener('load', function() {
-            console.log('Page loaded successfully');
-        });
+        // Monitor script loading
+        var ui5Script = document.getElementById('sap-ui-bootstrap');
+        if (ui5Script) {
+            console.log('UI5 Bootstrap script found in DOM');
+            console.log('Script src:', ui5Script.src);
+            
+            ui5Script.onload = function() {
+                console.log('✅ UI5 script LOADED successfully');
+            };
+            
+            ui5Script.onerror = function(e) {
+                console.error('❌ UI5 script FAILED to load');
+                console.error('Error:', e);
+            };
+        } else {
+            console.error('❌ UI5 Bootstrap script NOT found');
+        }
         
-        // Error handling
-        window.addEventListener('error', function(e) {
-            console.error('Error:', e.message, e.filename, e.lineno);
-        });
+        // Check after 3 seconds
+        setTimeout(function() {
+            if (typeof sap !== 'undefined') {
+                console.log('✅ SAP namespace available');
+                if (sap.ui) {
+                    console.log('✅ SAP UI Core available');
+                }
+            } else {
+                console.error('❌ SAP namespace NOT available');
+                console.error('UI5 library failed to load from CDN');
+                console.error('Possible causes:');
+                console.error('1. Network/firewall blocking sapui5.hana.ondemand.com');
+                console.error('2. Content Security Policy blocking external scripts');
+                console.error('3. CORS issue');
+            }
+        }, 3000);
     </script>
-</head>
-<body class="sapUiBody sapUiSizeCompact" id="content">
-    <div
-        data-sap-ui-component
-        data-name="firstapp.project1"
-        data-id="container"
-        data-settings='{"id" : "firstapp.project1"}'
-        data-handle-validation="true"
-    ></div>
 </body>
 </html>
